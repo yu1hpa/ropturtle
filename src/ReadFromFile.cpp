@@ -55,5 +55,4 @@ void ReadFromFile::Reader(String f)
             setDisp(line);
         }
     }
-    debug();
 }
