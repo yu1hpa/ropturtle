@@ -53,6 +53,20 @@ public:
             m_disp.push_back(l);
         }
     }
+
+    std::vector<String> getGadget()
+    {
+        return m_gadget;
+    }
+    std::vector<String> getAnswer()
+    {
+        return m_answer;
+    }
+    std::vector<String> getDisp()
+    {
+        return m_disp;
+    }
+
     void debug(){
         Print << U"gadget";
         for(auto g : m_gadget)
