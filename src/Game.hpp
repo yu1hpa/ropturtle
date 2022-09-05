@@ -12,6 +12,7 @@ public:
     void drawInstList() const;
     void drawBlock() const;
     void initStoredGadget();
+    String pickAddress(size_t ci);
 private:
     const Font font{ 20 };
     std::vector<String> instList;
