@@ -22,6 +22,8 @@ Game::Game(const InitData& init)
 
     // 答えの数
     ansInstNum = rf.getAnswer().size();
+    // 答え合わせ用のリスト
+    answer = rf.getAnswer();
 
     // 答え分テキストを入れる場所を確保&初期化
     storedGadget.resize(ansInstNum);
@@ -76,6 +78,48 @@ void Game::update()
             chosenStoredIdx++;
         }
     }
+
+    // 答え合わせ
+    if (KeyB.down())
+    {
+        if (storedGadget.at(ansInstNum-1) != U"" )
+        {
+            // TODO: 答え合わせをするかどうかアラートを入れる（未定）
+            for (auto a : answer)
+            {
+                Print << a;
+            }
+            if (isCorrectAnswer())
+            {
+                Print << U"Correct";
+            } else {
+                Print << U"Incorrect";
+            }
+        } else {
+            Print << U"ブロックを埋めてください";
+        }
+    }
+
+    // ブロックをクリア
+    if (KeyQ.down())
+    {
+        initStoredGadget();
+        chosenStoredIdx = 0;
+    }
+}
+
+bool Game::isCorrectAnswer()
+{
+    size_t i = answer.size() - 1;
+    for (auto a : answer)
+    {
+        if (a != storedGadget.at(i))
+        {
+            return false;
+        }
+        i--;
+    }
+    return true;
 }
 
 void Game::draw() const
