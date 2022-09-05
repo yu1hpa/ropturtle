@@ -72,7 +72,7 @@ void Game::update()
     {
         if (chosenStoredIdx < ansInstNum)
         {
-            storedGadget.at(chosenStoredIdx) = instList.at(chosenInst);
+            storedGadget.at(chosenStoredIdx) = pickAddress(chosenInst);
             chosenStoredIdx++;
         }
     }
@@ -82,6 +82,27 @@ void Game::draw() const
 {
     drawBlock();
     drawInstList();
+}
+
+String Game::pickAddress(size_t ci)
+{
+    std::string delimiter = ":";
+    String g = instList.at(ci);
+    // 値だけの場合(":"が見つからなかったとき)
+    if(g.narrow().find(delimiter) == std::string::npos)
+    {
+        return g;
+    } else {
+        // 0x401aa0:A
+        // ^ Pickup this by this func.
+        size_t pos = 0;
+        while((pos = g.narrow().find(delimiter)) != std::string::npos)
+        {
+            // String型で返す(Unicode::Widen)
+            return Unicode::Widen(g.narrow().substr(0, pos));
+        }
+        return U"";
+    }
 }
 
 void Game::initStoredGadget()
