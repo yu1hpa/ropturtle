@@ -14,6 +14,7 @@ public:
     void initStoredGadget();
     String pickAddress(size_t ci);
     bool isCorrectAnswer();
+    void dispAssembleChain() const;
 private:
     const Font font{ 20 };
     std::vector<String> instList;
@@ -22,4 +23,5 @@ private:
     size_t chosenStoredIdx;
     std::vector<String> answer;
     size_t ansInstNum;
+    std::vector<String> disp;
 };
