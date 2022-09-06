@@ -18,6 +18,7 @@ Game::Game(const InitData& init)
     ReadFromFile rf;
     rf.Reader(U"roptext/00.txt");
 
+    disp = rf.getDisp();
     instList = rf.getGadget();
 
     // 答えの数
@@ -126,6 +127,7 @@ void Game::draw() const
 {
     drawBlock();
     drawInstList();
+    dispAssembleChain();
 }
 
 String Game::pickAddress(size_t ci)
@@ -215,4 +217,10 @@ void Game::drawBlock() const
 
         font(storedGadget.at(i)).drawAt(rectLeft + rectWidth/2, rectButtom - rectHeight/2, ColorF{ 0.25 });
     }
+}
+
+void Game::dispAssembleChain() const
+{
+    Rect{ 50, 50, Scene::Width()/2 - 2*50, 50 }.draw(ColorF{ 0.8, 0.2, 0.2 });
+    font(disp.at(0)).drawAt(50 + (Scene::Width()/2 - 2*50)/2, 50+(50/2), ColorF{ 0.25 });
 }
