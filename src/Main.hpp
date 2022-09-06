@@ -1,4 +1,8 @@
 # pragma once
 # include <Siv3D.hpp>
 
-using App = SceneManager<String>;
+struct GameData {
+    String selectedLevel = U"00";
+};
+
+using App = SceneManager<String, GameData>;

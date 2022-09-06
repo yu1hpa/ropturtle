@@ -16,7 +16,11 @@ Game::Game(const InitData& init)
     ClearPrint();
     Print << U"Game::Game()";
     ReadFromFile rf;
-    rf.Reader(U"roptext/00.txt");
+
+    String filepath = U"roptext/";
+    filepath += getData().selectedLevel;
+    filepath += U".txt";
+    rf.Reader(filepath);
 
     disp = rf.getDisp();
     instList = rf.getGadget();
