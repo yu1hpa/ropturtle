@@ -12,9 +12,10 @@ Game::Game(const InitData& init)
     : IScene{ init }
     , chosenInst(0)
     , chosenStoredIdx(0)
+    , isCorrect(false)
+    , isIncorrect(false)
 {
     ClearPrint();
-    Print << U"Game::Game()";
     ReadFromFile rf;
 
     String filepath = U"roptext/";
@@ -36,12 +37,11 @@ Game::Game(const InitData& init)
 }
 
 Game::~Game() {
-    Print << U"Game::~Game()";
 }
 
 void Game::update()
 {
-    if (MouseL.down())
+    if (KeyZ.down())
     {
         changeScene(U"Title");
     }
@@ -90,15 +90,11 @@ void Game::update()
         if (storedGadget.at(ansInstNum-1) != U"" )
         {
             // TODO: 答え合わせをするかどうかアラートを入れる（未定）
-            for (auto a : answer)
-            {
-                Print << a;
-            }
             if (isCorrectAnswer())
             {
-                Print << U"Correct";
+                isCorrect = true;
             } else {
-                Print << U"Incorrect";
+                isIncorrect = true;
             }
         } else {
             Print << U"ブロックを埋めてください";
@@ -132,6 +128,14 @@ void Game::draw() const
     drawBlock();
     drawInstList();
     dispAssembleChain();
+    if (isCorrect)
+    {
+        drawCorrect();
+    }
+    if (isIncorrect)
+    {
+        drawIncorrect();
+    }
 }
 
 String Game::pickAddress(size_t ci)
@@ -168,14 +172,14 @@ void Game::drawInstList() const
     size_t gi = 0;
 
     // InstList Field
-    Rect{ 50, Scene::Height()/4, Scene::Width()/2 - 2*50, 3*(Scene::Height()/4) }.draw(ColorF{0.3, 0.3, 0.3, 0.5});
+    Rect{ 50, Scene::Height()/4, Scene::Width()/2 - 50, 3*(Scene::Height()/4) }.draw(ColorF{0.3, 0.3, 0.3, 0.5});
     for(auto g : instList)
     {
         if (gi == chosenInst)
         {
-            font(g).draw(Scene::Width()/8, Scene::Height()/4+30*gi).drawFrame(2, ColorF{1, 0, 0, 1});
+            font(g).draw(60, 10 + Scene::Height()/4+30*gi).drawFrame(2, ColorF{1, 0, 0, 1});
         } else {
-            font(g).draw(Scene::Width()/8, Scene::Height()/4+30*gi);
+            font(g).draw(60, 10 + Scene::Height()/4+30*gi);
         }
         gi++;
     }
@@ -203,6 +207,8 @@ void Game::drawBlock() const
     // 長方形の左と右の座標を計算
     size_t rectLeft = Scene::Width()/2+50;
     size_t rectRight = rectLeft + 340;
+    // 長方形の横の長さを計算
+    size_t rectWidth = rectRight - rectLeft;
 
     size_t rectHeightPadding = 50;
 
@@ -214,17 +220,34 @@ void Game::drawBlock() const
         size_t rectTop = Scene::Height() - (75 * (i+1));
         size_t rectButtom = Scene::Height() - (75 * (i+1)) + rectHeightPadding;
 
-        // 長方形の横の長さを計算
-        size_t rectWidth = rectRight - rectLeft;
         // 長方形の縦の長さを計算
         size_t rectHeight = rectButtom - rectTop;
 
         font(storedGadget.at(i)).drawAt(rectLeft + rectWidth/2, rectButtom - rectHeight/2, ColorF{ 0.25 });
     }
+    
+    //各長方形の上と下の座標を計算
+    size_t rectTop = Scene::Height() - (75 * (ansInstNum+1));
+    size_t rectButtom = Scene::Height() - (75 * (ansInstNum+1)) + rectHeightPadding;
+    // 長方形の縦の長さを計算
+    size_t rectHeight = rectButtom - rectTop;
+    font(U"v RIP (ROP START HERE)").drawAt(rectLeft + rectWidth/2, rectButtom - rectHeight/2, ColorF{ 0, 0, 0 });
 }
 
 void Game::dispAssembleChain() const
 {
-    Rect{ 50, 50, Scene::Width()/2 - 2*50, 50 }.draw(ColorF{ 0.8, 0.2, 0.2 });
-    font(disp.at(0)).drawAt(50 + (Scene::Width()/2 - 2*50)/2, 50+(50/2), ColorF{ 0.25 });
+    Rect{ 50, 50, Scene::Width()/2 - 50, 50 }.draw(ColorF{ 0.6, 0.8, 1, 80 });
+    font(disp.at(0)).drawAt(50 + (Scene::Width()/2 - 2*50)/2, 50+(50/2), ColorF{ 0, 0, 0 });
+}
+
+void Game::drawCorrect() const
+{
+    Rect{ 0, 0, Scene::Width(), Scene::Height() }.draw(ColorF{ 0.7, 0.7, 0.7, 0.5 });
+    ansfont(U"Correct !!!").drawAt(Scene::Width()/2, Scene::Height()/2, ColorF{ 1, 0.1, 0.1 });
+}
+
+void Game::drawIncorrect() const
+{
+    Rect{ 0, 0, Scene::Width(), Scene::Height() }.draw(ColorF{ 0.7, 0.7, 0.7, 0.5 });
+    ansfont(U"Incorrect...").drawAt(Scene::Width()/2, Scene::Height()/2, ColorF{ 0.1, 0.1, 1 });
 }
